@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.3.xsd"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans">
+	<bean class="org.apache.commons.dbcp.BasicDataSource"
+		id="dataSource">
+		<property value="com.mysql.jdbc.Driver"
+			name="driverClassName" />
+		<property value="jdbc:mysql://localhost:3306/flightSearch"
+			name="url" />
+		<property value="root" name="username" />
+		<property value="root" name="password" />
+	</bean>
+	<bean
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		id="sessionFactoryUser">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.nagarro.javatraining.flightSearch.model.User</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">update</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+	<bean
+		class="org.springframework.orm.hibernate5.LocalSessionFactoryBean"
+		id="sessionFactoryFlight">
+		<property name="dataSource" ref="dataSource" />
+		<property name="annotatedClasses">
+			<list>
+				<value>com.nagarro.javatraining.flightSearch.model.Flight</value>
+				<value>com.nagarro.javatraining.flightSearch.model.Airline</value>
+			</list>
+		</property>
+		<property name="hibernateProperties">
+			<props>
+				<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+				<prop key="hibernate.hbm2ddl.auto">create</prop>
+				<prop key="hibernate.show_sql">true</prop>
+			</props>
+		</property>
+	</bean>
+	<bean class="org.springframework.orm.hibernate5.HibernateTemplate"
+		id="templateUser">
+		<property name="sessionFactory" ref="sessionFactoryUser" />
+	</bean>
+	<bean class="org.springframework.orm.hibernate5.HibernateTemplate"
+		id="templateFlight">
+		<property name="sessionFactory" ref="sessionFactoryFlight" />
+	</bean>
+	<bean
+		class="com.nagarro.javatraining.flightSearch.dao.UserDaoImpl"
+		id="userdao">
+		<property name="template" ref="templateUser" />
+	</bean>
+	<bean
+		class="com.nagarro.javatraining.flightSearch.dao.FlightNAirlineDaoImpl"
+		id="flightDao">
+		<property name="template" ref="templateFlight" />
+	</bean>
+</beans>
